@@ -1,24 +1,39 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
 const knex = require('../db/knex');
-const { generateToken } = require('../utils/jwt');
-
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const express = require('express');
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await knex('users').where({ email }).first();
+    // Verifica se os campos foram enviados
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Email e senha são obrigatórios' });
+    }
 
-    if (!user) return res.status(400).json({ message: 'Usuário não encontrado' });
+    try {
+        const user = await knex('users').where({ email }).first();
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!user) {
+            return res.status(401).json({ message: 'Credenciais inválidas' });
+        }
 
-    if (!passwordMatch) return res.status(401).json({ message: 'Senha incorreta' });
+        const match = await bcrypt.compare(password, user.password);
 
-    const token = generateToken({ id: user.id, email: user.email });
+        if (!match) {
+            return res.status(401).json({ message: 'Credenciais inválidas' });
+        }
 
-    res.json({ token });
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
+            expiresIn: '1d'
+        });
+
+        return res.status(200).json({ token });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Erro no servidor' });
+    }
 });
 
 module.exports = router;

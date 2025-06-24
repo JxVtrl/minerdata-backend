@@ -14,5 +14,12 @@ module.exports = {
     seeds: {
       directory: './src/db/seeds'
     }
+  },
+
+  test: {
+    client: 'pg',
+    connection: process.env.TEST_DATABASE_URL || process.env.DATABASE_URL,
+    migrations: { directory: './src/db/migrations' },
+    seeds: { directory: './src/db/seeds' }
   }
 };
