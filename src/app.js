@@ -5,18 +5,22 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const publicationsRoutes = require('./routes/publications');
+const createCrawlerRoutes = require('./routes/crawler'); // função agora
 
-const app = express();
+function createApp(io) {
+    const app = express();
 
-// Middlewares
-app.use(bodyParser.json());
-app.use(cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-}));
+    app.use(bodyParser.json());
+    app.use(cors({
+        origin: 'http://localhost:5173',
+        credentials: true,
+    }));
 
-// Rotas
-app.use('/auth', authRoutes);
-app.use('/publications', publicationsRoutes);
+    app.use('/auth', authRoutes);
+    app.use('/publications', publicationsRoutes);
+    app.use('/crawler', createCrawlerRoutes(io)); // injeta io
 
-module.exports = app;
+    return app;
+}
+
+module.exports = createApp;
