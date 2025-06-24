@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const publicationsRoutes = require('./routes/publications');
 const crawlerRoutes = require('./routes/crawler');
+const clientsRoutes = require('./routes/clients');
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(cors({
 app.use('/auth', authRoutes);
 app.use('/publications', publicationsRoutes);
 app.use('/crawler', crawlerRoutes);
+app.use('/clients', clientsRoutes);
 
 module.exports = app;
