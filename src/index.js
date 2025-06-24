@@ -4,8 +4,8 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const bodyParser = require('body-parser');
-const { login, verifyToken } = require('./auth/controller');
-const { authenticateToken } = require('./auth/middleware');
+const authRoutes = require('./routes/auth');
+const publicationsRoutes = require('./routes/publications');
 
 // Configuração do servidor
 const app = express();
@@ -21,8 +21,8 @@ app.use(cors({
 }));
 
 // Rotas de autenticação
-app.post('/login', login);
-app.get('/verify', authenticateToken, verifyToken);
+app.use('/auth', authRoutes);
+app.use('/publications', publicationsRoutes);
 
 // Configuração do Socket.IO
 const io = new Server(server, {

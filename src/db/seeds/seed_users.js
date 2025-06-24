@@ -1,11 +1,15 @@
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> } 
- */
+const bcrypt = require('bcrypt');
+
 exports.seed = async function (knex) {
   await knex('users').del();
+
+  const passwordHash = await bcrypt.hash('admin123', 10);
+
   await knex('users').insert([
-    { username: 'joao', password: '123456' },
-    { username: 'admin', password: 'admin' }
+    {
+      name: 'Admin',
+      email: 'admin@minerdata.dev',
+      password: passwordHash,
+    },
   ]);
 };
