@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -12,6 +13,12 @@ const server = http.createServer(app);
 
 // Middleware para parsear o corpo das requisições
 app.use(bodyParser.json());
+
+// Configuração do CORS
+app.use(cors({
+    origin: 'http://localhost:5173', // URL do frontend
+    credentials: true
+}));
 
 // Rotas de autenticação
 app.post('/login', login);
