@@ -4,7 +4,9 @@
   "description": "Backend do projeto MinerData. Esta API em Node.js é responsável por coletar dados públicos (via crawler/API), expô-los via REST e emitir eventos em tempo real usando Socket.IO.",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "build": "docker build -t minerdata-backend .",
+    "start": "docker run -p 3001:3001 minerdata-backend"
   },
   "keywords": [],
   "author": "",
