@@ -11,11 +11,13 @@ exports.seed = async function (knex) {
       name: 'Admin',
       email: 'admin@minerdata.dev',
       password: adminPasswordHash,
+      role: 'admin',
     },
     {
       name: 'João',
       email: 'joao@minerdata.dev',
       password: joaoPasswordHash,
+      role: 'user',
     }
   ]);
 };

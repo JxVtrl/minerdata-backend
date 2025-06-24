@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const knex = require('../db/knex');
+const adminAuth = require('../middlewares/adminAuth');
+
+// Aplicar middleware de admin em todas as rotas de clientes
+router.use(adminAuth);
 
 // Listar todos os clientes
 router.get('/', async (req, res) => {
