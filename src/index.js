@@ -2,10 +2,20 @@ require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const bodyParser = require('body-parser');
+const { login, verifyToken } = require('./auth/controller');
+const { authenticateToken } = require('./auth/middleware');
 
 // Configuração do servidor
 const app = express();
 const server = http.createServer(app);
+
+// Middleware para parsear o corpo das requisições
+app.use(bodyParser.json());
+
+// Rotas de autenticação
+app.post('/login', login);
+app.get('/verify', authenticateToken, verifyToken);
 
 // Configuração do Socket.IO
 const io = new Server(server, {
