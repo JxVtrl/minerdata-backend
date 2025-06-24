@@ -1,21 +1,16 @@
-# Usa imagem oficial do Node
 FROM node:18
 
-# Cria diretório da aplicação
 WORKDIR /app
 
-# Copia os arquivos da aplicação
+# Instala o netcat (necessário para o wait-for.sh)
+RUN apt-get update && apt-get install -y netcat-openbsd
+
 COPY package*.json ./
 RUN npm install
 
-# Copia o restante do código
 COPY . .
 
-# Expõe a porta usada pelo app
-EXPOSE 3001
+# Dá permissão aos scripts
+RUN chmod +x entrypoint.sh wait-for.sh
 
-# Define variáveis de ambiente (para fallback, mas usa .env localmente no compose)
-ENV PORT=3001
-
-# Comando para iniciar a aplicação
-CMD ["npm", "run", "dev"]
+ENTRYPOINT ["./entrypoint.sh"]
