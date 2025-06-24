@@ -2,30 +2,33 @@ const express = require('express');
 const router = express.Router();
 const knex = require('../db/knex');
 
-router.get('/run', async (req, res) => {
-    const startLog = await knex('crawler_logs')
-        .insert({ status: 'iniciado', message: 'Crawler iniciado' })
-        .returning('*');
+router.post('/run', async (req, res) => {
+    const io = req.app.get('io'); // Obtém a instância do Socket.IO
+    let progress = 0;
 
-    const logId = startLog[0].id;
+    // Simula execução do crawler com progresso
+    const interval = setInterval(async () => {
+        progress += 20;
 
-    try {
-        // Executa o crawler...
-        // Simula demora
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Emite progresso para todos os clientes conectados
+        io.emit('progress', { percent: progress });
 
-        await knex('crawler_logs')
-            .where({ id: logId })
-            .update({ ended_at: knex.fn.now(), status: 'concluído', message: 'Crawler finalizado com sucesso' });
+        // A cada etapa, salva um dado simulado no banco
+        await knex('publications').insert({
+            title: `Publicação ${progress}%`,
+            content: `Conteúdo da publicação coletada com progresso de ${progress}%`,
+            source_url: 'https://exemplo.gov.br/fake',
+            published_at: new Date()
+        });
 
-        return res.json({ message: 'Crawler iniciado' });
-    } catch (err) {
-        await knex('crawler_logs')
-            .where({ id: logId })
-            .update({ ended_at: knex.fn.now(), status: 'erro', message: err.message });
+        // Finaliza
+        if (progress >= 100) {
+            clearInterval(interval);
+            io.emit('done', { message: 'Crawler finalizado com sucesso!' });
+        }
+    }, 500);
 
-        return res.status(500).json({ message: 'Erro ao executar crawler' });
-    }
+    return res.status(202).json({ message: 'Crawler iniciado' });
 });
 
 module.exports = router;
