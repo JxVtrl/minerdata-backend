@@ -17,7 +17,8 @@ router.post('/run', async (req, res) => {
         await knex('publications').insert({
             title: `Publicação ${progress}%`,
             content: `Conteúdo da publicação coletada com progresso de ${progress}%`,
-            source_url: 'https://exemplo.gov.br/fake',
+            source: 'ANM',
+            link: 'https://exemplo.gov.br/fake',
             published_at: new Date()
         });
 

@@ -1,26 +1,21 @@
-// src/app.js
 require('dotenv').config();
-const cors = require('cors');
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const publicationsRoutes = require('./routes/publications');
-const createCrawlerRoutes = require('./routes/crawler'); // função agora
+const crawlerRoutes = require('./routes/crawler');
 
-function createApp(io) {
-    const app = express();
+const app = express();
 
-    app.use(bodyParser.json());
-    app.use(cors({
-        origin: 'http://localhost:5173',
-        credentials: true,
-    }));
+app.use(bodyParser.json());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+}));
 
-    app.use('/auth', authRoutes);
-    app.use('/publications', publicationsRoutes);
-    app.use('/crawler', createCrawlerRoutes(io)); // injeta io
+app.use('/auth', authRoutes);
+app.use('/publications', publicationsRoutes);
+app.use('/crawler', crawlerRoutes);
 
-    return app;
-}
-
-module.exports = createApp;
+module.exports = app;
